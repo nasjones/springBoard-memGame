@@ -1,6 +1,5 @@
 const gameContainer = document.getElementById("game");
 const startButton = document.getElementById("start");
-const restartButton = document.getElementById("restart");
 const scoreBoard = document.getElementById("score");
 const hiScore = document.getElementById("hiscore");
 const cardNum = document.getElementById("cardNumber");
@@ -10,15 +9,6 @@ hiscore.innerText = localStorage.hiscore;
 
 for (let i = 4; i <= 100; i += 2) {
 	cardNum.innerHTML += `<option value="${i}">${i}</option>`;
-}
-
-function start() {
-	gameContainer.innerHTML = "";
-	let shuffledColors = shuffle();
-	createDivsForColors(shuffledColors);
-	score = 0;
-	currentFlipped = 0;
-	scoreBoard.innerText = score;
 }
 
 function colorPicker() {
@@ -122,9 +112,10 @@ function matchCheck() {
 
 // when the DOM loads
 startButton.addEventListener("click", (e) => {
-	start();
-});
-
-restartButton.addEventListener("click", () => {
-	start();
+	gameContainer.innerHTML = "";
+	let shuffledColors = shuffle();
+	createDivsForColors(shuffledColors);
+	score = 0;
+	currentFlipped = 0;
+	scoreBoard.innerText = score;
 });
