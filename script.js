@@ -1,14 +1,28 @@
 const gameContainer = document.getElementById("game");
 const startButton = document.getElementById("start");
 const scoreBoard = document.getElementById("score");
-const hiScore = document.getElementById("hiscore");
+const scoreTable = document.getElementById("hiscores");
 const cardNum = document.getElementById("cardNumber");
+const over = document.getElementById("over");
 let currentFlipped = 0;
 let score = 0;
-hiscore.innerText = localStorage.hiscore;
 
-for (let i = 4; i <= 100; i += 2) {
-	cardNum.innerHTML += `<option value="${i}">${i}</option>`;
+if (!localStorage.hiscores) {
+	let scores = {};
+	for (let i = 4; i <= 50; i += 2) {
+		scores[`${i}`] = 0;
+	}
+	localStorage.setItem("hiscores", JSON.stringify(scores));
+	scoreDisplay();
+} else {
+	scoreDisplay();
+}
+
+for (let i = 4; i <= 50; i += 2) {
+	let opt = document.createElement("option");
+	opt.value = i;
+	opt.innerText = `${i}`;
+	cardNum.appendChild(opt);
 }
 
 function colorPicker() {
@@ -20,6 +34,7 @@ function colorPicker() {
 	}
 	return colorStrings.concat(colorStrings);
 }
+
 // here is a helper function to shuffle an array
 // it returns the same array with values shuffled
 // it is based on an algorithm called Fisher Yates if you want ot research more
@@ -78,15 +93,7 @@ function handleCardClick(event) {
 		matchCheck();
 	}
 
-	if (document.getElementsByClassName("done").length == cardNum.value) {
-		if (localStorage.hiscore) {
-			localStorage.hiscore =
-				score < localStorage.hiscore ? score : localStorage.hiscore;
-		} else {
-			localStorage.hiscore = score;
-		}
-		hiscore.innerText = localStorage.hiscore;
-	}
+	endGame();
 }
 
 function matchCheck() {
@@ -110,12 +117,53 @@ function matchCheck() {
 	}
 }
 
-// when the DOM loads
-startButton.addEventListener("click", (e) => {
+function endGame() {
+	if (document.getElementsByClassName("done").length == cardNum.value) {
+		let tempscores = JSON.parse(localStorage.getItem("hiscores"));
+		over.classList.remove("hide");
+		if (
+			tempscores[cardNum.value] == 0 ||
+			tempscores[cardNum.value] > score
+		) {
+			tempscores[cardNum.value] = score;
+			localStorage.setItem("hiscores", JSON.stringify(tempscores));
+			scoreDisplay();
+		}
+
+		// if (localStorage.hiscore) {
+		// 	localStorage.hiscore =
+		// 		score < localStorage.hiscore ? score : localStorage.hiscore;
+		// } else {
+		// 	localStorage.hiscore = score;
+		// }
+		// hiscore.innerText = localStorage.hiscore;
+	}
+}
+
+function scoreDisplay() {
+	scoreTable.children[2].innerHTML = "";
+	let scoreHold = JSON.parse(localStorage.getItem("hiscores"));
+	let i = 0;
+	for (let [key, value] of Object.entries(scoreHold)) {
+		let row = scoreTable.children[2].insertRow();
+		let cell = row.insertCell();
+		cell.innerText = `${key}`;
+		cell = row.insertCell();
+		cell.innerText = `${value}`;
+		i++;
+	}
+}
+
+function gameStart() {
 	gameContainer.innerHTML = "";
+	over.classList.add("hide");
 	let shuffledColors = shuffle();
 	createDivsForColors(shuffledColors);
 	score = 0;
 	currentFlipped = 0;
 	scoreBoard.innerText = score;
-});
+}
+
+// when the DOM loads
+startButton.addEventListener("click", gameStart);
+cardNum.addEventListener("change", gameStart);
