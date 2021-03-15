@@ -129,14 +129,6 @@ function endGame() {
 			localStorage.setItem("hiscores", JSON.stringify(tempscores));
 			scoreDisplay();
 		}
-
-		// if (localStorage.hiscore) {
-		// 	localStorage.hiscore =
-		// 		score < localStorage.hiscore ? score : localStorage.hiscore;
-		// } else {
-		// 	localStorage.hiscore = score;
-		// }
-		// hiscore.innerText = localStorage.hiscore;
 	}
 }
 
@@ -164,6 +156,5 @@ function gameStart() {
 	scoreBoard.innerText = score;
 }
 
-// when the DOM loads
 startButton.addEventListener("click", gameStart);
 cardNum.addEventListener("change", gameStart);
